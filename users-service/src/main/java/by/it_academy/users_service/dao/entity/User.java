@@ -1,125 +1,41 @@
 package by.it_academy.users_service.dao.entity;
 
 
-import by.it_academy.users_service.dto.enums.Status;
+import by.it_academy.users_service.dao.enums.Status;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.Set;
 import java.util.UUID;
 
 @Entity
-@Table(schema = "", name = "Users")
+@Table(schema = "user", name = "users")
 public class User implements UserDetails {
 
-    private String username;
-    private String password;
-    private boolean accountNonExpired;
-    private boolean accountNonLocked;
-    private boolean credentialsNonExpired;
-    private boolean enabled;
     private UUID uuid;
-    private String email;
-    private Role role;
-    private Status status;
     private LocalDateTime dtCreate;
     private LocalDateTime dtUpdate;
+    private String nick;
+    private String password;
+    private String mail;
+    private Status status;
 
-    private Set<Role> authorities;
-
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(schema = "user", name = "users_roles",
+            joinColumns = {@JoinColumn(name = "user_uuid", referencedColumnName = "uuid")},
+            inverseJoinColumns = {@JoinColumn(name = "user_role", referencedColumnName = "name")})
+    private Set<Role> role;
 
     public User() {
     }
 
-
-    @Override
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    @Override
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    @Override
-    public boolean isAccountNonExpired() {
-        return accountNonExpired;
-    }
-
-    public void setAccountNonExpired(boolean accountNonExpired) {
-        this.accountNonExpired = accountNonExpired;
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return accountNonLocked;
-    }
-
-    public void setAccountNonLocked(boolean accountNonLocked) {
-        this.accountNonLocked = accountNonLocked;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return credentialsNonExpired;
-    }
-
-    public void setCredentialsNonExpired(boolean credentialsNonExpired) {
-        this.credentialsNonExpired = credentialsNonExpired;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
-    }
-
     @Id
+    @Column(name = "uuid")
     public UUID getUuid() {
         return uuid;
-    }
-
-    public void setUuid(UUID uuid) {
-        this.uuid = uuid;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    @Enumerated(EnumType.STRING)
-    public Role getRole() {
-        return role;
-    }
-
-    public void setRole(Role role) {
-        this.role = role;
-    }
-
-    @Enumerated(EnumType.STRING)
-    public Status getStatus() {
-        return status;
-    }
-
-    public void setStatus(Status status) {
-        this.status = status;
     }
 
     @Column(name = "dt_create")
@@ -127,29 +43,96 @@ public class User implements UserDetails {
         return dtCreate;
     }
 
-    public void setDtCreate(LocalDateTime dtCreate) {
-        this.dtCreate = dtCreate;
-    }
-
+    @Version
     @Column(name = "dt_update")
     public LocalDateTime getDtUpdate() {
         return dtUpdate;
+    }
+
+    @Column(name = "nick")
+    public String getNick() {
+        return nick;
+    }
+
+    @Column(unique = true, name = "mail")
+    public String getMail() {
+        return mail;
+    }
+
+    @Column(name = "status")
+    @Enumerated(EnumType.STRING)
+    public Status getStatus() {
+        return status;
+    }
+
+    public Set<Role> getRole() {
+        return role;
+    }
+
+    public void setUuid(UUID uuid) {
+        this.uuid = uuid;
+    }
+
+    public void setDtCreate(LocalDateTime dtCreate) {
+        this.dtCreate = dtCreate;
     }
 
     public void setDtUpdate(LocalDateTime dtUpdate) {
         this.dtUpdate = dtUpdate;
     }
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(schema = "", name = "",
-            joinColumns = {@JoinColumn(name = "", referencedColumnName = "")},
-            inverseJoinColumns = {@JoinColumn(name = "", referencedColumnName = "")})
-    @Override
-    public Set<Role> getAuthorities() {
-        return authorities;
+    public void setNick(String nick) {
+        this.nick = nick;
     }
 
-    public void setAuthorities(Set<Role> authorities) {
-        this.authorities = authorities;
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public void setMail(String mail) {
+        this.mail = mail;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
+    }
+
+    public void setRole(Set<Role> role) {
+        this.role = role;
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return getRole();
+    }
+
+    @Column(name = "password")
+    public String getPassword() {
+        return this.password;
+    }
+
+    @Override
+    public String getUsername() {
+        return getMail();
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
     }
 }

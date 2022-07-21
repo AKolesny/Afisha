@@ -1,24 +1,27 @@
 package by.it_academy.users_service.dto;
 
-import by.it_academy.users_service.dto.enums.Status;
+import by.it_academy.users_service.dao.entity.Role;
+import by.it_academy.users_service.dao.enums.Status;
+
+import java.util.Set;
 
 public class UserDto {
 
-    private String email;
+    private String mail;
     private String password;
     private String nick;
-    private String role;
+    private Set<Role> role;
     private Status status;
 
     public UserDto() {
     }
 
-    public String getEmail() {
-        return email;
+    public String getMail() {
+        return mail;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setMail(String mail) {
+        this.mail = mail;
     }
 
     public String getPassword() {
@@ -37,11 +40,11 @@ public class UserDto {
         this.nick = nick;
     }
 
-    public String getRole() {
+    public Set<Role> getRole() {
         return role;
     }
 
-    public void setRole(String role) {
+    public void setRole(Set<Role> role) {
         this.role = role;
     }
 

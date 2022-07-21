@@ -1,8 +1,10 @@
 package by.it_academy.users_service.dto;
 
-import by.it_academy.users_service.dto.enums.Status;
+import by.it_academy.users_service.dao.entity.Role;
+import by.it_academy.users_service.dao.enums.Status;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 import java.util.UUID;
 
 public class UserDtoOut {
@@ -10,10 +12,10 @@ public class UserDtoOut {
     private UUID uuid;
     private LocalDateTime dtCreate;
     private LocalDateTime dtUpdate;
-    private String email;
+    private String mail;
     private String password;
     private String nick;
-    private String role;
+    private Set<Role> role;
     private Status status;
 
     public UserDtoOut() {
@@ -43,12 +45,12 @@ public class UserDtoOut {
         this.dtUpdate = dtUpdate;
     }
 
-    public String getEmail() {
-        return email;
+    public String getMail() {
+        return mail;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setMail(String mail) {
+        this.mail = mail;
     }
 
     public String getPassword() {
@@ -67,11 +69,11 @@ public class UserDtoOut {
         this.nick = nick;
     }
 
-    public String getRole() {
+    public Set<Role> getRole() {
         return role;
     }
 
-    public void setRole(String role) {
+    public void setRole(Set<Role> role) {
         this.role = role;
     }
 

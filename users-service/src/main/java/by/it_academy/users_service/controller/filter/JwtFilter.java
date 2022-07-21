@@ -1,11 +1,11 @@
 package by.it_academy.users_service.controller.filter;
 
 import by.it_academy.users_service.controller.utils.JwtTokenUtil;
+import by.it_academy.users_service.service.api.IUserService;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -22,10 +22,10 @@ import static org.apache.logging.log4j.util.Strings.isEmpty;
 @Component
 public class JwtFilter extends OncePerRequestFilter {
 
-    private final UserDetailsManager userManager;
+    private final IUserService service;
 
-    public JwtFilter(UserDetailsManager userManager) {
-        this.userManager = userManager;
+    public JwtFilter(IUserService service) {
+        this.service = service;
     }
 
     @Override
@@ -48,7 +48,7 @@ public class JwtFilter extends OncePerRequestFilter {
         }
 
         // Get user identity and set it on the spring security context
-        UserDetails userDetails = userManager
+        UserDetails userDetails = service
                 .loadUserByUsername(JwtTokenUtil.getUsername(token));
 
         UsernamePasswordAuthenticationToken
