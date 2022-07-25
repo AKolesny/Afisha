@@ -1,6 +1,5 @@
 package by.it_academy.users_service.controller;
 
-import by.it_academy.users_service.dao.entity.User;
 import by.it_academy.users_service.dto.IMyPage;
 import by.it_academy.users_service.dto.UserDto;
 import by.it_academy.users_service.dto.UserDtoOut;

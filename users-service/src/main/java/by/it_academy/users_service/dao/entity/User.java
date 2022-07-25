@@ -15,55 +15,60 @@ import java.util.UUID;
 @Table(schema = "user", name = "users")
 public class User implements UserDetails {
 
+    @Id
+    @Column(name = "uuid")
     private UUID uuid;
+
+    @Column(name = "dt_create")
     private LocalDateTime dtCreate;
+    @Version
+    @Column(name = "dt_update")
     private LocalDateTime dtUpdate;
     private String nick;
     private String password;
+    @Column(unique = true)
     private String mail;
+
+    @Enumerated(EnumType.STRING)
     private Status status;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(schema = "user", name = "users_roles",
-            joinColumns = {@JoinColumn(name = "user_uuid", referencedColumnName = "uuid")},
+            joinColumns ={ @JoinColumn(name = "user_uuid", referencedColumnName = "uuid")},
             inverseJoinColumns = {@JoinColumn(name = "user_role", referencedColumnName = "name")})
     private Set<Role> role;
 
     public User() {
     }
 
-    @Id
-    @Column(name = "uuid")
+
     public UUID getUuid() {
         return uuid;
     }
 
-    @Column(name = "dt_create")
+
     public LocalDateTime getDtCreate() {
         return dtCreate;
     }
 
-    @Version
-    @Column(name = "dt_update")
+
     public LocalDateTime getDtUpdate() {
         return dtUpdate;
     }
 
-    @Column(name = "nick")
     public String getNick() {
         return nick;
     }
 
-    @Column(unique = true, name = "mail")
     public String getMail() {
         return mail;
     }
 
-    @Column(name = "status")
-    @Enumerated(EnumType.STRING)
+
     public Status getStatus() {
         return status;
     }
+
 
     public Set<Role> getRole() {
         return role;
@@ -106,7 +111,7 @@ public class User implements UserDetails {
         return getRole();
     }
 
-    @Column(name = "password")
+
     public String getPassword() {
         return this.password;
     }

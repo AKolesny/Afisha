@@ -4,12 +4,14 @@ import by.it_academy.users_service.dao.entity.User;
 import by.it_academy.users_service.dto.*;
 import by.it_academy.users_service.service.api.IAdminMapper;
 import org.springframework.data.domain.Page;
+import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+@Component
 public class AdminMapper implements IAdminMapper {
 
     public UserDtoOut mapDtoOut(User user) {

@@ -9,7 +9,7 @@ import javax.persistence.*;
 @Table(schema = "user", name = "roles")
 public class Role implements GrantedAuthority {
 
-
+    @Id
     private String name;
 
     public Role() {
@@ -19,7 +19,7 @@ public class Role implements GrantedAuthority {
         this.name = name;
     }
 
-    @Id
+
     public String getName() {
         return name;
     }
