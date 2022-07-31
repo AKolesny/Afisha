@@ -5,6 +5,9 @@ public class UserLogIn {
     private String mail;
     private String password;
 
+    public UserLogIn() {
+    }
+
     public UserLogIn(String mail, String password) {
         this.mail = mail;
         this.password = password;

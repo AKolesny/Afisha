@@ -12,7 +12,7 @@ import java.util.Set;
 import java.util.UUID;
 
 @Entity
-@Table(schema = "user", name = "users")
+@Table(schema = "users_service", name = "users")
 public class User implements UserDetails {
 
     @Id
@@ -33,7 +33,7 @@ public class User implements UserDetails {
     private Status status;
 
     @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(schema = "user", name = "users_roles",
+    @JoinTable(schema = "users_service", name = "users_roles",
             joinColumns ={ @JoinColumn(name = "user_uuid", referencedColumnName = "uuid")},
             inverseJoinColumns = {@JoinColumn(name = "user_role", referencedColumnName = "name")})
     private Set<Role> role;

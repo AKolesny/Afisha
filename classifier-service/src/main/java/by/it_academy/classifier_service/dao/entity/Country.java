@@ -8,23 +8,16 @@ import java.util.UUID;
 @Table(schema = "classifiers", name = "countries")
 public class Country {
 
-    @Id
     private UUID uuid;
-
-    @Column(name = "dt_create")
     private LocalDateTime dtCreate;
-
-    @Version
-    @Column(name = "dt_update")
     private LocalDateTime dtUpdate;
-
     private String title;
-
     private String description;
 
     public Country() {
     }
 
+    @Id
     public UUID getUuid() {
         return uuid;
     }
@@ -33,6 +26,8 @@ public class Country {
         this.uuid = uuid;
     }
 
+    @Version
+    @Column(name = "dt_update")
     public LocalDateTime getDtUpdate() {
         return dtUpdate;
     }
@@ -41,6 +36,7 @@ public class Country {
         this.dtUpdate = dtUpdate;
     }
 
+    @Column(name = "dt_create")
     public LocalDateTime getDtCreate() {
         return dtCreate;
     }
@@ -49,6 +45,7 @@ public class Country {
         this.dtCreate = dtCreate;
     }
 
+    @Column(unique = true, nullable = false)
     public String getTitle() {
         return title;
     }

@@ -1,36 +1,38 @@
 package by.it_academy.classifier_service.service;
 
-
 import by.it_academy.classifier_service.dao.api.ICountryDao;
 import by.it_academy.classifier_service.dao.entity.Country;
-import by.it_academy.classifier_service.dto.CountryDto;
+import by.it_academy.classifier_service.dto.country.CountryDto;
+import by.it_academy.classifier_service.mappers.CountryMapper;
 import by.it_academy.classifier_service.service.api.ICountryService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;;
+import javax.persistence.EntityNotFoundException;
 import java.util.UUID;
 
 @Service
+@Transactional(readOnly = true)
 public class CountryService implements ICountryService {
 
     private final ICountryDao dao;
+    private final CountryMapper mapper;
 
-    public CountryService(ICountryDao dao) {
+    public CountryService(ICountryDao dao, CountryMapper mapper) {
         this.dao = dao;
+        this.mapper = mapper;
     }
 
     @Override
-    public void save(CountryDto countryDto) {
-        Country country = new Country();
-        country.setUuid(UUID.randomUUID());
-        country.setDtCreate(LocalDateTime.now());
-        country.setDtUpdate(country.getDtUpdate());
-        country.setTitle(countryDto.getTitle());
-        country.setDescription(countryDto.getDescription());
+    @Transactional
+    public Country save(CountryDto dto) {
+        Country country = this.mapper.convertToCountry(dto);
 
         this.dao.save(country);
+
+        return country;
     }
 
     @Override
@@ -41,7 +43,7 @@ public class CountryService implements ICountryService {
     @Override
     public Country get(UUID uuid) {
         return this.dao.findById(uuid)
-                .orElseThrow(() -> {throw new IllegalArgumentException("Не нашли такого Country");
+                .orElseThrow(() -> {throw new EntityNotFoundException();
         });
     }
 }

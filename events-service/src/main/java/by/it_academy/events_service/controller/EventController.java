@@ -1,17 +1,21 @@
 package by.it_academy.events_service.controller;
 
-import by.it_academy.events_service.dao.entity.Event;
-import by.it_academy.events_service.dto.EventDto;
-import by.it_academy.events_service.dto.EventDtoOut;
-import by.it_academy.events_service.dto.MyPage;
-import by.it_academy.events_service.dto.enums.Type;
+import by.it_academy.events_service.dto.api.IEvent;
+import by.it_academy.events_service.dto.api.IMyPage;
+import by.it_academy.events_service.dto.event.EventDto;
+import by.it_academy.events_service.dao.enums.Type;
+import by.it_academy.events_service.mappers.ConcertMapper;
+import by.it_academy.events_service.mappers.FilmMapper;
 import by.it_academy.events_service.service.api.IConcertService;
 import by.it_academy.events_service.service.api.IFilmService;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.UUID;
 
 @RestController
@@ -20,107 +24,109 @@ public class EventController {
 
     private final IFilmService filmService;
     private final IConcertService concertService;
+    private final ConcertMapper concertMapper;
+    private final FilmMapper filmMapper;
 
-    public EventController(IFilmService filmService, IConcertService concertService) {
+    public EventController(IFilmService filmService, IConcertService concertService,
+                           ConcertMapper concertMapper, FilmMapper filmMapper) {
         this.filmService = filmService;
         this.concertService = concertService;
+        this.concertMapper = concertMapper;
+        this.filmMapper = filmMapper;
     }
 
     @PostMapping
-    public void save(@RequestBody EventDto dto) {
+    public ResponseEntity<IEvent> save(@RequestBody EventDto dto) {
+        IEvent responseDto;
+
         switch (dto.getType()) {
             case FILMS:
-                this.filmService.save(dto);
+                responseDto = this.filmMapper.convertToFilmDto(this.filmService.save(dto));
                 break;
 
             case CONCERTS:
-                this.concertService.save(dto);
+                responseDto = this.concertMapper.convertToConcertDto(this.concertService.save(dto));
                 break;
 
             default:
                 throw new IllegalArgumentException("Нет такого типа" + dto.getType());
         }
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
     }
 
     @GetMapping("/{type}")
-    public ResponseEntity<MyPage<Event>> getAll(@PathVariable Type type,
+    public ResponseEntity<IMyPage<IEvent>> getAll(@PathVariable Type type,
                                                 @RequestParam(value = "page", defaultValue = "0") Integer page,
                                                 @RequestParam(value = "size", defaultValue = "25") Integer size){
 
         PageRequest pageRequest = PageRequest.of(page, size);
 
-        Page<Event> eventPage;
+        IMyPage<IEvent> eventPage;
 
         switch (type) {
             case FILMS:
-                eventPage = this.filmService.getAll(pageRequest);
+                eventPage = this.filmMapper.convertToFilmPage(this.filmService.getAll(pageRequest));
                 break;
 
             case CONCERTS:
-                eventPage = this.concertService.getAll(pageRequest);
+                eventPage = this.concertMapper.convertToConcertPage(this.concertService.getAll(pageRequest));
                 break;
 
             default:
                 throw new IllegalArgumentException("Нет такого типа" + type);
         }
 
-        return ResponseEntity.ok(new MyPage<>(eventPage.getNumber(), eventPage.getSize(),
-                eventPage.getTotalPages(), eventPage.getTotalElements(), eventPage.isFirst(),
-                eventPage.getNumberOfElements(), eventPage.isLast(), eventPage.getContent()));
+        return ResponseEntity.ok(eventPage);
 
     }
 
     @GetMapping("/{type}/{uuid}")
-    public ResponseEntity<EventDtoOut> get(@PathVariable Type type,
+    public ResponseEntity<IEvent> get(@PathVariable Type type,
                                            @PathVariable UUID uuid) {
 
-        Event event;
+        IEvent event;
 
         switch (type) {
             case FILMS:
-                event = this.filmService.get(uuid);
+                event = this.filmMapper.convertToFilmDto(this.filmService.get(uuid));
                 break;
 
             case CONCERTS:
-                event = this.concertService.get(uuid);
+                event = this.concertMapper.convertToConcertDto(this.concertService.get(uuid));
                 break;
 
             default:
                 throw new IllegalArgumentException("Нет такого типа" + type);
         }
 
-        EventDtoOut dtoOut = new EventDtoOut();
-        dtoOut.setUuid(event.getUuid());
-        dtoOut.setDtCreate(event.getDtCreate());
-        dtoOut.setDtUpdate(event.getDtUpdate());
-        dtoOut.setDtEvent(event.getDtEvent());
-        dtoOut.setDtEndOfSale(event.getDtEndOfSale());
-        dtoOut.setDescription(event.getDescription());
-        dtoOut.setTitle(event.getTitle());
-        dtoOut.setStatus(event.getStatus());
-        dtoOut.setType(event.getType());
-
-        return ResponseEntity.ok(dtoOut);
+        return ResponseEntity.ok(event);
 
     }
 
     @PutMapping("/{type}/{uuid}/dt_update/{dt_update}")
-    public void update(@RequestBody EventDto dto,
+    public ResponseEntity<IEvent> update(@RequestBody EventDto dto,
                        @PathVariable Type type,
                        @PathVariable UUID uuid,
                        @PathVariable("dt_update") Long dtUpdate) {
 
+        LocalDateTime update = LocalDateTime.ofInstant(Instant.ofEpochMilli(dtUpdate), ZoneId.systemDefault());
+
+        IEvent responseDto;
+
         switch (type) {
             case FILMS:
-                this.filmService.update(dto, uuid, dtUpdate);
+                responseDto = this.filmMapper.convertToFilmDto(this.filmService.update(dto, uuid, update));
                 break;
 
             case CONCERTS:
-                this.concertService.update(dto, uuid, dtUpdate);
+                responseDto = this.concertMapper.convertToConcertDto(this.concertService.update(dto, uuid, update));
                 break;
 
             default:
                 throw new IllegalArgumentException("Нет такого типа" + dto.getType());
         }
+
+        return ResponseEntity.ok(responseDto);
     }
 }

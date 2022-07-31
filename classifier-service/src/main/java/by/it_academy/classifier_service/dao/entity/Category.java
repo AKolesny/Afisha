@@ -7,22 +7,15 @@ import java.util.UUID;
 @Entity
 @Table(schema = "classifiers", name = "categories")
 public class Category {
-    @Id
+
     private UUID uuid;
-
-
-    @Column(name = "dt_create")
     private LocalDateTime dtCreate;
-
-    @Version
-    @Column(name = "dt_update")
     private LocalDateTime dtUpdate;
-
     private String title;
-
     public Category() {
     }
 
+    @Id
     public UUID getUuid() {
         return uuid;
     }
@@ -31,6 +24,8 @@ public class Category {
         this.uuid = uuid;
     }
 
+    @Version
+    @Column(name = "dt_update")
     public LocalDateTime getDtUpdate() {
         return dtUpdate;
     }
@@ -39,6 +34,7 @@ public class Category {
         this.dtUpdate = dtUpdate;
     }
 
+    @Column(name = "dt_create")
     public LocalDateTime getDtCreate() {
         return dtCreate;
     }
@@ -47,6 +43,7 @@ public class Category {
         this.dtCreate = dtCreate;
     }
 
+    @Column(unique = true, nullable = false)
     public String getTitle() {
         return title;
     }

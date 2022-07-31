@@ -46,9 +46,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         // Set permissions on endpoints
         http.authorizeRequests()
                 // Our public endpoints
-                .antMatchers("api/v1/users/registration").anonymous()
-                .antMatchers("api/v1/users/registration").anonymous()
-                .antMatchers("api/v1/users/me").authenticated()
+                .antMatchers("/api/v1/users/registration").anonymous()
+                .antMatchers("/api/v1/users/login").anonymous()
+                .antMatchers("/api/v1/users/me").authenticated()
+                .antMatchers("/api/v1/users").hasAuthority("ADMIN")
+                .antMatchers("/api/v1/users/{uuid}").hasAuthority("ADMIN")
+                .antMatchers("/api/v1/users/{uuid}/dt_update/{dt_update}").hasAuthority("ADMIN")
                 // Our private endpoints
                 .anyRequest().authenticated();
 

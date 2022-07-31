@@ -11,13 +11,14 @@ import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
 import java.net.URI;
+import java.util.List;
 import java.util.UUID;
 
 @Service
 public class ClassifierService implements IClassifierService {
 
-    private final String country = "http://localhost:8080/api/v1/classifier/country/";
-    private final String category = "http://localhost:8080/api/v1/classifier/concert/category/";
+    private final static String COUNTRY = "http://localhost:8080/api/v1/classifier/country/";
+    private final static String CATEGORY = "http://localhost:8080/api/v1/classifier/concert/category/";
 
     private final RestTemplate template;
 
@@ -48,11 +49,11 @@ public class ClassifierService implements IClassifierService {
 
     @Override
     public void isCountry(UUID uuid) throws IllegalArgumentException {
-        isUuid(this.country, uuid);
+        isUuid(COUNTRY, uuid);
     }
 
     @Override
     public void isCategory(UUID uuid) throws IllegalArgumentException {
-        isUuid(this.category, uuid);
+        isUuid(CATEGORY, uuid);
     }
 }

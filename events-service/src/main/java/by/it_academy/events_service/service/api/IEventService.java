@@ -1,20 +1,20 @@
 package by.it_academy.events_service.service.api;
 
 import by.it_academy.events_service.dao.entity.Event;
-import by.it_academy.events_service.dto.EventDto;
-import by.it_academy.events_service.dto.EventDtoOut;
+import by.it_academy.events_service.dto.event.EventDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
-public interface IEventService {
+public interface IEventService<T> {
 
-    void save(EventDto dto);
+    T save(EventDto dto);
 
-    Page<Event> getAll(Pageable pageable);
+    Page<T> getAll(Pageable pageable);
 
-    Event get(UUID uuid);
+    T get(UUID uuid);
 
-    void update(EventDto dto, UUID uuid, Long dtUpdate);
+    T update(EventDto dto, UUID uuid, LocalDateTime dtUpdate);
 }

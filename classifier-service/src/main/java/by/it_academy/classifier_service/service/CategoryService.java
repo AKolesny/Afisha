@@ -2,33 +2,37 @@ package by.it_academy.classifier_service.service;
 
 import by.it_academy.classifier_service.dao.api.ICategoryDao;
 import by.it_academy.classifier_service.dao.entity.Category;
-import by.it_academy.classifier_service.dto.CategoryDto;
+import by.it_academy.classifier_service.dto.category.CategoryDto;
+import by.it_academy.classifier_service.mappers.CategoryMapper;
 import by.it_academy.classifier_service.service.api.ICategoryService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
+import javax.persistence.EntityNotFoundException;
 import java.util.UUID;
 
 @Service
+@Transactional(readOnly = true)
 public class CategoryService implements ICategoryService {
 
-    ICategoryDao dao;
+    private final ICategoryDao dao;
+    private final CategoryMapper mapper;
 
-    public CategoryService(ICategoryDao dao) {
+    public CategoryService(ICategoryDao dao, CategoryMapper mapper) {
         this.dao = dao;
+        this.mapper = mapper;
     }
 
     @Override
-    public void save(CategoryDto categoryDto) {
-        Category category = new Category();
-        category.setUuid(UUID.randomUUID());
-        category.setDtCreate(LocalDateTime.now());
-        category.setDtUpdate(category.getDtUpdate());
-        category.setTitle(categoryDto.getTitle());
+    @Transactional
+    public Category save(CategoryDto dto) {
+        Category category = this.mapper.convertToCategory(dto);
 
         this.dao.save(category);
+
+        return category;
     }
 
     @Override
@@ -39,7 +43,7 @@ public class CategoryService implements ICategoryService {
     @Override
     public Category get(UUID uuid) {
         return this.dao.findById(uuid)
-                .orElseThrow(() -> {throw new IllegalArgumentException("Не нашли такой Category");
+                .orElseThrow(() -> {throw new EntityNotFoundException();
                 });
     }
 }

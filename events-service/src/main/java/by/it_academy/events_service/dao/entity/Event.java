@@ -1,7 +1,7 @@
 package by.it_academy.events_service.dao.entity;
 
-import by.it_academy.events_service.dto.enums.Status;
-import by.it_academy.events_service.dto.enums.Type;
+import by.it_academy.events_service.dao.enums.Status;
+import by.it_academy.events_service.dao.enums.Type;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -18,6 +18,8 @@ public class Event {
    private LocalDateTime dtEndOfSale;
    private Type type;
    private Status status;
+
+   private String author;
 
     public Event() {
     }
@@ -100,5 +102,13 @@ public class Event {
 
     public void setStatus(Status status) {
         this.status = status;
+    }
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
     }
 }
